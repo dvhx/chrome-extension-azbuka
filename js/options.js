@@ -11,17 +11,17 @@ window.addEventListener('DOMContentLoaded', function () {
     AZ.e = SC.elementsWithId();
 
     // load settings
-    chrome.storage.local.get('language', function (o) {
-        AZ.language = o.language || '';
-        AZ.e.native_language.value = AZ.language;
-        AZ.e.guessed_language.textContent = guessUserLanguage(AZ.language) || 'interslavic_latin';
+    chrome.storage.local.get('dst_lang', function (o) {
+        AZ.dst_lang = o.dst_lang || '';
+        AZ.e.dst_lang.value = AZ.dst_lang;
+        AZ.e.guessed_language.textContent = guessUserLanguage(AZ.dst_lang) || 'interslavic_latin';
     });
 
-    // Change native language
-    AZ.e.native_language.addEventListener('change', function () {
-        AZ.language = AZ.e.native_language.value;
-        chrome.storage.local.set({language: AZ.language});
-        chrome.runtime.sendMessage({dst_lang: AZ.language, text: "abc"}, console.log);
+    // Change dst language
+    AZ.e.dst_lang.addEventListener('change', function () {
+        AZ.dst_lang = AZ.e.dst_lang.value;
+        chrome.storage.local.set({dst_lang: AZ.dst_lang});
+        chrome.runtime.sendMessage({dst_lang: AZ.dst_lang, text: "abc"}, console.log);
     });
 });
 
