@@ -78,9 +78,12 @@ AZ.getOrReplaceSelection = (function () {
             walk = document.createTreeWalker(document.body, window.NodeFilter.SHOW_TEXT, null, false);
             n = walk.nextNode();
             while (n) {
-                s.push(n);
+                if (n && n.parentNode && n.parentNode.nodeName !== 'STYLE' && n.parentNode.nodeName !== 'SCRIPT') {
+                    s.push(n);
+                }
                 n = walk.nextNode();
             }
+            //console.log('zzz', s.length);
         }
 
         for (i = s.length - 1; i >= 0; i--) {
