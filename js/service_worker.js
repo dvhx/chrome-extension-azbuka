@@ -143,7 +143,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             if (sample.length > 20000) {
                 sample = sample.substr(Math.round(sample.length / 2), 20000);
             }
-            //console.log('rrr', request.data.length, sample.length);
+            // console.log('sample', sample);
             var src_lang = request.src_lang /*|| config.src_lang*/ || guessLanguage(sample) || "interslavic_latin";
             var dst_lang = request.dst_lang || config.dst_lang || guessUserLanguage(AZ.language, src_lang) || "interslavic_latin";
             //console.log({src_lang,dst_lang,sample});
