@@ -1,0 +1,20 @@
+body {
+    max-width: 50em;
+    margin: auto;
+    color: black;
+    background-color: white;
+}
+.dict {
+    margin-bottom: 1ex;
+    xfont-size: large;
+}
+h3 {
+    margin-top: 2em;
+}
+p {
+    margin: auto;
+    margin-top: 1ex;
+    max-width: 100%;
+    display: inline-block;
+}
+

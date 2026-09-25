@@ -1,0 +1,116 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Azbuka popup</title>
+        <style type="text/css">
+        body {
+            min-width: 40em;
+            min-height: 30em;
+            margin: 0;
+            padding: 1ex;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            box-sizing: border-box;
+        }
+        textarea {
+            flex: 1;
+            display: block
+            box-sizing: border-box;
+            resize: none;
+        }
+        button {
+        }
+        #single {
+            display: inline;
+        }
+        #controls {
+            height: 3em;
+            border: 0px solid red;
+            clear: both;
+        }
+        #controls button {
+            margin-top: 1ex;
+        }
+        .footer {
+            text-align: right;
+        }
+        nav {
+            display: flex;
+            align-items: center;
+            margin-top: 1ex;
+            margin-bottom: 1ex;
+        }
+        nav select {
+            margin-left: 1ex;
+            margin-right: 1ex;
+        }
+        nav .flex {
+            flex: 1;
+        }
+        </style>
+    </head>
+    <body>
+        <textarea id="text" autofocus placeholder="Type or paste text here"></textarea>
+        <nav>
+            Text is
+            <select id="src_lang">
+                <option selected value="">Autodetect</option>
+                <optgroup label="Cyrillic">
+                    <option value="belarusian">Belarusian</option>
+                    <option value="bosnian">Bosnian</option>
+                    <option value="bulgarian">Bulgarian</option>
+                    <option value="macedonian">Macedonian</option>
+                    <option value="montenegrin">Montenegrin</option>
+                    <option value="russian">Russian</option>
+                    <option value="serbian">Serbian</option>
+                    <option value="ukrainian">Ukrainian</option>
+                </optgroup>
+                <optgroup label="Latin">
+                    <!-- option value="latin">Latin (any)</option -->
+                    <option value="croatian">Croatian</option>
+                    <option value="czech">Czech</option>
+                    <option value="polish">Polish</option>
+                    <option value="slovak">Slovak</option>
+                    <option value="slovenian">Slovenian</option>
+                </optgroup>
+            </select>
+            <label>Output is</label>
+            <select id="dst_lang">
+                <option selected value="">Autodetect</option>
+                <optgroup label="Cyrillic">
+                    <option value="interslavic_cyrillic">Меджусловјанскы</option>
+                    <option value="belarusian">Belarusian</option>
+                    <option value="bosnian">Bosnian</option>
+                    <option value="bulgarian">Bulgarian</option>
+                    <option value="macedonian">Macedonian</option>
+                    <option value="montenegrin">Montenegrin</option>
+                    <option value="russian">Russian</option>
+                    <option value="serbian">Serbian</option>
+                    <option value="ukrainian">Ukrainian</option>
+                </optgroup>
+                <optgroup label="Latin">
+                    <option value="interslavic_latin">Medžuslovjansky</option>
+                    <option value="croatian">Croatian</option>
+                    <option value="czech">Czech</option>
+                    <option value="polish">Polish</option>
+                    <option value="slovak">Slovak</option>
+                    <option value="slovenian">Slovenian</option>
+                </optgroup>
+            </select>
+            <div class="flex"></div>
+            <button id="clear">Clear</button>
+        </nav>
+        <textarea id="output" autofocus placeholder="Here will be transliterated text"></textarea>
+
+        <div class="footer">
+            <a href="popup.html#remember" target="_blank">Open this popup in new tab</a>
+        </div>
+
+        <script type="text/javascript" src="depend/sc/elements_with_id.js"></script>
+        <script type="module" src="js/utils_module.js"></script>
+        <script type="text/javascript" src="js/popup.js"></script>
+
+    </body>
+</html>

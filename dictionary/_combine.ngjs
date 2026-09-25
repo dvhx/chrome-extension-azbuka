@@ -1,0 +1,34 @@
+#!/usr/bin/env ngspicejs
+// Combine all json files into one ../js/dictionary.js file so that it can be imported once in service_worker.js
+// linter: ngspicejs-lint
+"use strict";
+
+clear_screen();
+
+var dict_from = {}, dict_to = {}, n = 0;
+dir('.').sort().filter((fn) => file_ext(fn) === '.json').forEach((fn) => {
+    var key = file_ext_replace(file_name(fn), '');
+    var lang = key.replace('from_', '').replace('to_', '');
+    var data = file_read_json(fn);
+    if (key.startsWith('from_')) {
+        dict_from[lang] = data;
+    } else {
+        dict_to[lang] = data;
+    }
+    n++;
+    echo(key);
+});
+
+var code =
+    '// All dictionaries combined from /dictionary/*.json\n' +
+    '// linter: ngspicejs-lint\n' +
+    '"use strict";\n\n' +
+    'import {capitalize} from "./capitalize.js";\n\n' +
+    'export const dictionary_to = capitalize(' + JSON.stringify(dict_to, undefined, 1) + ');\n' +
+    'export const dictionary_from = capitalize(' + JSON.stringify(dict_from, undefined, 1) + ');\n';
+
+//file_write('../dictionary.js', code);
+file_write('../js/dictionary.js', code);
+
+echo('saved ' + n + ' dictionaries to ../dictionary.js');
+delay_ms(500);

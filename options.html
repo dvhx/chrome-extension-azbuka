@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Options</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width" />
+    <link rel="shortcut icon" href="image/16.png" type="image/png" />
+    <link rel="stylesheet" href="css/options.css" type="text/css" />
+  </head>
+  <body>
+
+    <h1>Azbuka extension options</h1>
+
+    <p>Your native language was autodetected to be
+    <b style="text-transform: uppercase;" id="guessed_language">UNKNOWN</b>.
+    Whether it was guessed correctly or not, please set your native language here.
+    It is important for optimal translation to your native language.</p>
+
+    <p>Your native language:
+
+    <select id="native_language">
+        <option selected value="">Autodetect</option>
+        <optgroup label="Cyrillic">
+            <option value="Меджусловјанскы">Меджусловјанскы</option>
+            <option value="belarusian">Belarusian</option>
+            <option value="bosnian">Bosnian</option>
+            <option value="bulgarian">Bulgarian</option>
+            <option value="macedonian">Macedonian</option>
+            <option value="montenegrin">Montenegrin</option>
+            <option value="russian">Russian</option>
+            <option value="serbian">Serbian</option>
+            <option value="ukrainian">Ukrainian</option>
+        </optgroup>
+        <optgroup label="Latin">
+            <option value="Medžuslovjansky">Medžuslovjansky</option>
+            <option value="croatian">Croatian</option>
+            <option value="czech">Czech</option>
+            <option value="polish">Polish</option>
+            <option value="slovak">Slovak</option>
+            <option value="slovenian">Slovenian</option>
+        </optgroup>
+    </select>
+
+    </p>
+
+    <h1>How to use it</h1>
+
+    <p>On any page select text you want to translate to your language. 
+    Right-click and choose "Azbuka (selection)" and it will be transliterated to your alphabet.
+    If you don't select anything, the popup menu will have option "Azbuka (entire page)" which
+    will transliterate entire page. You can also click on yellow "Az" icon in top-right corner
+    of Chrome to show popup where you can type text and see translation.</p>
+
+    <h1>Report issues</h1>
+
+    <p>If you find any errors with translations, please report them on project's github page: <a href="https://github.com/dvhx/chrome-extension-domain-whitelist/issues">https://github.com/dvhx/chrome-extension-azbuka/issues</a>.
+
+    <br>Especially if you are native speaker.
+
+
+    <script type="text/javascript" src="depend/sc/elements_with_id.js"></script>
+
+    <script type="module" src="js/utils_module.js"></script>
+    <script type="module" src="js/translate.js"></script>
+    <script type="module" src="js/options.js"></script>
+
+  </body>
+</html>

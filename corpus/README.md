@@ -1,0 +1,1 @@
+These corpuses are used for testing purposes. Most common words are first. Around 15000 words for each language.
