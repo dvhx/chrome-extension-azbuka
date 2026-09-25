@@ -10,7 +10,7 @@ AZ.update = function () {
     var data = {
         src_lang: AZ.e.src_lang.value,
         dst_lang: AZ.e.dst_lang.value,
-        text: AZ.e.text.value
+        text: AZ.e.text.value || ' '
     };
     chrome.storage.local.set(data);
     console.log('sending', data);
@@ -28,9 +28,9 @@ window.addEventListener('DOMContentLoaded', function () {
     AZ.e = SC.elementsWithId();
 
     // load settings
-    chrome.storage.local.get(['src_lang','dst_lang','text'], function (o) {
+    chrome.storage.local.get(['src_lang','dst_lang','text','language'], function (o) {
         AZ.e.src_lang.value = o.src_lang || '';
-        AZ.e.dst_lang.value = o.dst_lang || '';
+        AZ.e.dst_lang.value = o.dst_lang || o.language || '';
         AZ.e.text.value = o.text || '';
         AZ.update();
     });

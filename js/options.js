@@ -21,7 +21,7 @@ window.addEventListener('DOMContentLoaded', function () {
     AZ.e.native_language.addEventListener('change', function () {
         AZ.language = AZ.e.native_language.value;
         chrome.storage.local.set({language: AZ.language});
-        chrome.runtime.sendMessage({dst_lang: AZ.language}, console.log);
+        chrome.runtime.sendMessage({dst_lang: AZ.language, text: "abc"}, console.log);
     });
 });
 

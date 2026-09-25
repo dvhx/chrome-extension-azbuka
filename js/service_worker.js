@@ -94,8 +94,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
     if (message.text) {
         console.log('from popup', message);
-        var src_lang = message.src_lang || guessLanguage(message.text);
-        var dst_lang = message.dst_lang || guessUserLanguage(AZ.language, src_lang);
+        var src_lang = message.src_lang || guessLanguage(message.text) || "interslavic_latin";
+        var dst_lang = message.dst_lang || guessUserLanguage(AZ.language, src_lang) || "interslavic_latin";
+        console.log({src_lang,dst_lang});
         var i = translate(message.text, dictionary_from[src_lang]);
         var d = translate(i, dictionary_to[dst_lang]);
         sendResponse({ src_lang, dst_lang, text: d});
