@@ -89,8 +89,8 @@ export function guessLanguage(aSample) {
             }
         }
     }
-    console.log(score);
-    console.log(lang);
+    //console.log(score);
+    //console.log(lang);
 
     //console.log(lang);
     //console.log(uni);

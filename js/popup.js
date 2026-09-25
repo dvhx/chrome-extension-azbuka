@@ -10,7 +10,8 @@ AZ.update = function () {
     var data = {
         src_lang: AZ.e.src_lang.value,
         dst_lang: AZ.e.dst_lang.value,
-        text: AZ.e.text.value || ' '
+        type: 'nodes',
+        data: [AZ.e.text.value || ' ']
     };
     chrome.storage.local.set(data);
     console.log('sending', data);
@@ -19,7 +20,7 @@ AZ.update = function () {
         if (aResponse) {
             AZ.e.src_lang.title = 'Autodetected as ' + aResponse.src_lang;
             AZ.e.dst_lang.title = 'Autodetected as ' + aResponse.dst_lang;
-            AZ.e.output.value = aResponse.text;
+            AZ.e.output.value = aResponse.translation;
         }
     });
 };

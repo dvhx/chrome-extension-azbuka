@@ -1,26 +1,15 @@
-// Get selected nodes, replace them with translation
+// Replacing selected text on page (only text elements so that it wont break layout)
+// code from http://stackoverflow.com/users/96100/tim-down
+// http://stackoverflow.com/questions/7781963/js-get-array-of-all-selected-nodes-in-contenteditable-div
 // linter: ngspicejs-lint --browser
 // global:
 "use strict";
 
-//console.log('az js/selection.js');
+var AZ = window.AZ || {};
 
-var AZ = AZ || {};
+console.log("az selection.js");
 
-AZ.getAllTextNodes = function () {
-    // return all text nodes on page
-    var walk = document.createTreeWalker(document.body, window.NodeFilter.SHOW_TEXT, null, false),
-        n = walk.nextNode(),
-        r = [];
-    while (n) {
-        r.push(n);
-        n = walk.nextNode();
-    }
-    return r;
-};
-
-AZ.getSelection = function () {
-    // return selected nodes
+AZ.getOrReplaceSelection = (function () {
 
     function nextNode(node) {
         // auxiliary function
@@ -63,58 +52,62 @@ AZ.getSelection = function () {
         return rangeNodes;
     }
 
-    // get selected nodes
-    if (window.getSelection) {
-        var sel = window.getSelection();
-        if (!sel.isCollapsed) {
-            return getRangeSelectedNodes(sel.getRangeAt(0));
+    function getSelectedNodes() {
+        // get selected nodes
+        if (window.getSelection) {
+            var sel = window.getSelection();
+            if (!sel.isCollapsed) {
+                return getRangeSelectedNodes(sel.getRangeAt(0));
+            }
         }
+        return [document.body];
     }
-    return [];
-};
 
-AZ.selectionDigest = function (aSelection) {
-    // selection is normally array of nodes, this cannot be serialized and sent
-    // to background so we extract only string values of those nodes, this also
-    // remove any duplicates
-    var d = {}, i;
-    for (i = 0; i < aSelection.length; i++) {
-        if (aSelection[i].nodeValue) {
-            d[aSelection[i].nodeValue] = '';
+    function getSelectedTextNodes(aReplaceValues) {
+        // return only selected text nodes, optionally replace their values
+        var s = getSelectedNodes(),
+            t = [],
+            i,
+            v,
+            n,
+            walk;
+
+        // is selection is whole body, convert it to all text nodes
+        if ((s.length === 1) && (s[0] === document.body)) {
+            s = [];
+            walk = document.createTreeWalker(document.body, window.NodeFilter.SHOW_TEXT, null, false);
+            n = walk.nextNode();
+            while (n) {
+                s.push(n);
+                n = walk.nextNode();
+            }
         }
-        if (aSelection[i].placeholder) {
-            d[aSelection[i].placeholder] = '';
+
+        for (i = s.length - 1; i >= 0; i--) {
+            if (s[i] && s[i].nodeType === 3) {
+                t.push(s[i].nodeValue);
+                // if aReplaceValues is set, use it to replace values
+                if (aReplaceValues) {
+                    // skip empty nodes (e.g EOL)
+                    if (s[i].nodeValue.trim() !== '') {
+                        for (v in aReplaceValues.original) {
+                            if (aReplaceValues.original.hasOwnProperty(v)) {
+                                if (s[i].nodeValue === aReplaceValues.original[v]) {
+                                    s[i].textContent = aReplaceValues.translation[v];
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
-        if (aSelection[i].value) {
-            d[aSelection[i].value] = '';
+        if (t.length <= 0) {
+            console.warn('empty selection');
         }
-        if (aSelection[i].title) {
-            d[aSelection[i].title] = '';
-        }
+        return t;
     }
-    return d;
-};
 
-AZ.replaceSelection = function (aSelection, aDigest) {
-    // finally this function will replace entire selection with digest values (the translation)
-    // cancel selection to prevent certain bug with placeholder background color
-    window.getSelection().empty();
-    window.setTimeout(function () {
-        var i;
-        for (i = 0; i < aSelection.length; i++) {
-            if (aSelection[i].nodeValue) {
-                aSelection[i].nodeValue = aDigest[aSelection[i].nodeValue];
-            }
-            if (aSelection[i].placeholder) {
-                aSelection[i].placeholder = aDigest[aSelection[i].placeholder];
-            }
-            if (aSelection[i].value) {
-                aSelection[i].value = aDigest[aSelection[i].value];
-            }
-            if (aSelection[i].title) {
-                aSelection[i].title = aDigest[aSelection[i].title];
-            }
-        }
-    }, 300);
-};
+    return getSelectedTextNodes;
+
+}());
 

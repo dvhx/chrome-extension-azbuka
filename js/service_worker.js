@@ -10,7 +10,6 @@ var AZ = globalThis.AZ || {};
 import {translate,translateMissing} from "./translate.js";
 import {dictionary_to,dictionary_from} from "./dictionary.js";
 import {guessLanguage, guessUserLanguage, isLatin} from './utils_module.js';
-console.log(dictionary_to);
 
 AZ.dictionary_to = dictionary_to;
 AZ.dictionary_from = dictionary_from;
@@ -21,9 +20,9 @@ AZ.translate = translate;
 AZ.translateMissing = translateMissing;
 
 // Read user-prefered language
-AZ.language = "";
-chrome.storage.local.get(["language"], function (o) {
-    AZ.language = o.language;
+AZ.dst_lang = "";
+chrome.storage.local.get(["dst_lang"], function (o) {
+    AZ.dst_lang = o.dst_lang;
 });
 
 // create context menus
@@ -40,9 +39,49 @@ chrome.contextMenus.removeAll(function () {
     });
 });
 
+// Execute multiple script files
+AZ.executeScripts = async function (tabId, scripts) {
+    try {
+        for (const fn of scripts) {
+            await chrome.scripting.executeScript({
+                target: { tabId: tabId },
+                files: [fn]
+            });
+        }
+        //console.log('executed', tabId, scripts);
+    } catch (err) {
+        console.error('failed to inject scripts:', err);
+    }
+};
+
 // callback for context menus
 chrome.contextMenus.onClicked.addListener(function (aMenuItem, aTab) {
-
+    console.log('context menu', aMenuItem, aTab.id);
+    // translating selection
+    if (aMenuItem.menuItemId === 'translate_selection') {
+        AZ.executeScripts(
+            aTab.id,
+            [
+                // selection handling library
+                "/js/selection.js",
+                // get selection, send it to background (here), wait for response, replace selection
+                "/js/content_active_tab.js"
+            ]
+        );
+    }
+    // translating entire page
+    if (aMenuItem.menuItemId === 'translate_page') {
+        AZ.executeScripts(
+            aTab.id,
+            [
+                // selection handling library
+                "/js/selection.js",
+                // get selection, send it to background (here), wait for response, replace selection
+                "/js/content_active_tab_page.js"
+            ]
+        );
+    }
+    /*
     var onReceive = function (aDigest) {
         console.log('onReceive', aDigest, 'language', AZ.language);
         // receive digest object for translation
@@ -68,12 +107,13 @@ chrome.contextMenus.onClicked.addListener(function (aMenuItem, aTab) {
             }
         }
         console.log('digest', aDigest);
-        // send translation back to that tab
-        chrome.tabs.sendMessage(aTab.id, aDigest);
+
+        //chrome.tabs.sendMessage(aTab.id, aDigest);
     };
 
     // send to tab what context menu item id was clicked
     chrome.tabs.sendMessage(aTab.id, aMenuItem.menuItemId, onReceive);
+    */
 });
 
 // Open options page on install
@@ -87,20 +127,57 @@ chrome.runtime.onInstalled.addListener(function (aDetail) {
 });
 
 // Receiving messages from popup for translation
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    if (message.dst_lang) {
-        AZ.language = message.dst_lang;
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    //console.log('request', request);
+    chrome.storage.local.get(['src_lang', 'dst_lang'], function (config) {
+        //console.log('config', config);
+
+        // content script is sending nodes for translation
+        if (request.type === 'nodes') {
+            var response = {
+                "type": "replaceSelection",
+                "original": [],
+                "translation": []
+            };
+            var sample = request.data.join(' ');
+            if (sample.length > 20000) {
+                sample = sample.substr(Math.round(sample.length / 2), 20000);
+            }
+            //console.log('rrr', request.data.length, sample.length);
+            var src_lang = request.src_lang /*|| config.src_lang*/ || guessLanguage(sample) || "interslavic_latin";
+            var dst_lang = request.dst_lang || config.dst_lang || guessUserLanguage(AZ.language, src_lang) || "interslavic_latin";
+            //console.log({src_lang,dst_lang,sample});
+            response.src_lang = src_lang;
+            response.dst_lang = dst_lang;
+            for (var i in request.data) {
+                if (request.data.hasOwnProperty(i)) {
+                    var m = translate(request.data[i], dictionary_from[src_lang]);
+                    var d = translate(m, dictionary_to[dst_lang]);
+                    response.original.push(request.data[i]);
+                    response.translation.push(d);
+                }
+            }
+            //sendResponse({ src_lang, dst_lang, text: d});
+            sendResponse(response);
+            return;
+        }
+    });
+/*
+    if (request.dst_lang) {
+        AZ.language = request.dst_lang;
         console.log('update language to', AZ.language);
     }
-    if (message.text) {
+    if (request.text) {
         console.log('from popup', message);
-        var src_lang = message.src_lang || guessLanguage(message.text) || "interslavic_latin";
-        var dst_lang = message.dst_lang || guessUserLanguage(AZ.language, src_lang) || "interslavic_latin";
+        var src_lang = request.src_lang || guessLanguage(request.text) || "interslavic_latin";
+        var dst_lang = request.dst_lang || guessUserLanguage(AZ.language, src_lang) || "interslavic_latin";
         console.log({src_lang,dst_lang});
-        var i = translate(message.text, dictionary_from[src_lang]);
+        var i = translate(request.text, dictionary_from[src_lang]);
         var d = translate(i, dictionary_to[dst_lang]);
         sendResponse({ src_lang, dst_lang, text: d});
         return true;
     }
+*/
+    return true;
 });
 
