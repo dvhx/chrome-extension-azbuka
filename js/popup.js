@@ -37,7 +37,7 @@ window.addEventListener('DOMContentLoaded', function () {
     });
 
     // clear
-    AZ.e.clear.onclick = function () { AZ.e.text.value = ''; AZ.e.focus(); };
+    AZ.e.clear.onclick = function () { AZ.e.text.value = ''; AZ.e.output.value = ''; AZ.e.text.focus(); };
 
     // text change
     AZ.e.text.oninput = AZ.update;
